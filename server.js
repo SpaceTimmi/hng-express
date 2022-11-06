@@ -5,15 +5,18 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
-app.use(cors);
+app.use(cors());
 app.post('/', (req, res) => {
+    console.log(`${req.url} ${req.body}`);
+
     let Optype = computeOptype(req.body.operation_type);
     let n = computeResult(req.body, Optype);
+    console.log(req.body.operation_type)
 
     res.status(200).json({
         slackUsername: "Timon",
         operation_type: Optype,
-        result: n
+        result: n,
     });
 });
 
@@ -29,9 +32,13 @@ const subtractionSynoms = ["-", "subtract", "subtraction", "remove", "take away"
 
 const computeOptype = (str) => {
   // Get the type of operation.
-  if (additionSynoms.includes(str) !== -1) return 'addition';
-  else if (subtractionSynoms.includes(str) !== -1) return 'subtraction';
-  else return 'mulitplication'; // hopefully, this doesn't bite me in the a** :)
+  if (additionSynoms.includes(str) === true) {
+    return 'addition';
+  } else if (subtractionSynoms.includes(str) === true){
+    return 'subtraction';
+  } else {
+    return 'mulitplication';
+  }  // hopefully, this doesn't bite me in the a** :)
 }
 
 const computeResult = (json, Optype) => {
